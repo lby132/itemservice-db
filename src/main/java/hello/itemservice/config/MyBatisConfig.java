@@ -6,7 +6,6 @@ import hello.itemservice.repository.mybatis.MyBatisItemRepository;
 import hello.itemservice.service.ItemService;
 import hello.itemservice.service.ItemServiceV1;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class MyBatisConfig {
 
-    private ItemMapper itemMapper;
+    private final ItemMapper itemMapper;
 
     @Bean
     public ItemService itemService() {

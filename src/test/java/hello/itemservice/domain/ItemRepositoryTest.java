@@ -4,6 +4,7 @@ import hello.itemservice.repository.ItemRepository;
 import hello.itemservice.repository.ItemSearchCond;
 import hello.itemservice.repository.ItemUpdateDto;
 import hello.itemservice.repository.memory.MemoryItemRepository;
+import hello.itemservice.repository.mybatis.ItemMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +29,7 @@ class ItemRepositoryTest {
 
     @Autowired
     ItemRepository itemRepository;
+
 /*
     @Autowired
     PlatformTransactionManager transactionManager;
@@ -56,6 +59,7 @@ class ItemRepositoryTest {
     */
     @Test
     void save() {
+
         //given
         Item item = new Item("itemA", 10000, 10);
 

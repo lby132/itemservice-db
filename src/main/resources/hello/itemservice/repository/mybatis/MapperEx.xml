@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper>
+    <!--                          참고용 mapper                         -->
+
+    <!-- 동적쿼리 시작-->
+    <select id="findActiveBlogLike" resultType="Blog">
+    SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+    <choose>
+        <when test="title != null">
+            AND title like #{title}
+        </when>
+        <when test="author != null and author.name != null">
+            AND author_name like #{author.name}
+        </when>
+        <otherwise>
+            AND featured = 1
+        </otherwise>
+    </choose>
+    </select>
+
+    <!-- 첫부분에 AND나 OR이 있으면 WHERE로 대체한다.
+    SELECT * FROM BLOG AND   id = #{id} 로 들어가면 문법에러가 나니까
+    SELECT * FROM BLOG WHERE id = #{id} 로 바꿔준다.-->
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        ...
+    </trim>
+
+    <!-- foreach 사용법-->
+    <select id="findAll" resultType="Item">
+        select id, item_name, price, quantity
+        from item
+        <where>
+            <foreach item="item" index="index" collection="list"
+                     open="ID in (" separator="," close=")" nullable="true">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+    <!-- 파라미터로 List를 넘길때 컬렉션을 반복처리할때 사용한다. ex) where in(1,2,3,4,5,6) 와 같은 문장을 쉽게 완성할수있다. -->
+    <!-- 동적 쿼리 끝 -->
+
+    <!-- 기타 기능 -->
+    <!-- 재사용 가능한 SQL조각 -->
+    <sql id="userColumns">${alias}.id,${alias}.username,${alias}.password</sql>
+    <select id="selectUsers" resultType="map">
+        select
+            <include refid="userColumns"><property name="alias" value="t1"/></include>
+            <include refid="userColumns"><property name="alias" value="t2"/></include>
+        from some_table t1
+        cross join some_table t2
+    </select>
+
+    <sql id="sometable">
+        ${prefix}Table
+    </sql>
+
+    <sql id="someinclude">
+        from
+            <include refid="${include_target}"/>
+    </sql>
+
+    <select id="select" resultType="map">
+        select
+            field1, field2, field3
+        <include refid="someinclude">
+            <property name="prefix" value="Some"/>
+            <property name="unclude_target" value="sometable"/>
+        </include>
+    </select>
+
+    <!-- Result Map 결과를 매핑할때 테이블은 user_id이지만 객체는 id이다.
+    이런경우 컬럼명과 객체의 프로퍼티명이 다르다. 그러면 별칭(as)를 사용하면 되는데 resultMap을 쓰면 별칭을 안써줘도 된다.-->
+    <!--type="User"는 User로 매핑 한다는 뜻이다.-->
+    <resultMap id="userResultMap" type="User">
+        <id property="id" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+    </resultMap>
+    <!--User로 매핑된 userResultMap을 가져다 쓴다는 것.-->
+    <select id="selectUsers" resultMap="userResultMap">
+        select user_id, user_name, hashed_password
+        from some_table
+        where id = #{id}
+    </select>
+    <!-- 이렇게 하면 selectUsers에 있는 쿼리가 실행되고 결과가 resultMap 매핑되면서 User객체에 반환이된다. -->
+</mapper>
