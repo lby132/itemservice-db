@@ -19,13 +19,15 @@
         </otherwise>
     </choose>
     </select>
+    <!--
+        첫부분에 AND나 OR이 있으면 WHERE로 대체한다.
+        SELECT * FROM BLOG AND   id = #{id} 로 들어가면 문법에러가 나니까
+        SELECT * FROM BLOG WHERE id = #{id} 로 바꿔준다.
 
-    <!-- 첫부분에 AND나 OR이 있으면 WHERE로 대체한다.
-    SELECT * FROM BLOG AND   id = #{id} 로 들어가면 문법에러가 나니까
-    SELECT * FROM BLOG WHERE id = #{id} 로 바꿔준다.-->
-    <trim prefix="WHERE" prefixOverrides="AND|OR">
-        ...
-    </trim>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            ...
+        </trim>
+    -->
 
     <!-- foreach 사용법-->
     <select id="findAll" resultType="Item">
